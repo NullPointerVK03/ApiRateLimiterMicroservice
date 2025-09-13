@@ -1,0 +1,36 @@
+spring:
+  profiles:
+    active: local
+
+  application:
+    name: APIRateLimiter
+
+  data:
+    mongodb:
+      uri: ${MONGO_DB_URI}
+      database: ${DATABASE_NAME}
+      auto-index-creation: true
+
+
+limit:
+  allowed:
+    apiLimit: ${ALLOWED_API_LIMIT}
+    databaseLimit: ${ALLOWED_DATABASE_LIMIT}
+    anonymousLimit: ${ALLOWED_ANONYMOUS_LIMIT}
+
+
+jwt:
+  token:
+    allowed:
+      time:
+        period: ${EXP_TIME}
+
+  secret: ${JWT_SECRET}
+
+
+message:
+  access:
+    api: ${API_ACCESS_EXCEEDED_MSG}
+    database: ${DATABASE_ACCESS_EXCEEDED_MSG}
+    anonymous: ${ANONYMOUS_ACCESS_EXCEEDED_MSG}
+
