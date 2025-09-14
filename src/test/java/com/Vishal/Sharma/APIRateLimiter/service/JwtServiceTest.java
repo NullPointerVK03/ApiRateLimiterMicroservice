@@ -21,14 +21,14 @@ class JwtServiceTest {
     @Disabled
     void tokenGenerationByUserTest() {
         User dummyUser = User.builder().userName("dum3").password("123").build();
-        String token = jwtService.generateToken(dummyUser);
+        String token = jwtService.generateRefreshToken(dummyUser);
         int a = 5;
     }
 
     @Test
     @Disabled
     void extractUsernameFromJwtTokenTest() {
-        String userName = jwtService.getUserNameFromJwtToken("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkdW0zIiwibmFtZSI6ImR1bTMiLCJleHAiOjE3NTcxNjc3Mzg3NDEsImlhdCI6MTc1NzE2NzQzODc0MX0.8S9CMm4MeDlgui2VA9YH1QFjnI0kcFsKg8FYl8FazLM");
+        String userName = jwtService.getUserNameFromToken("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkdW0zIiwibmFtZSI6ImR1bTMiLCJleHAiOjE3NTcxNjc3Mzg3NDEsImlhdCI6MTc1NzE2NzQzODc0MX0.8S9CMm4MeDlgui2VA9YH1QFjnI0kcFsKg8FYl8FazLM");
         UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
         int a = 5;
     }

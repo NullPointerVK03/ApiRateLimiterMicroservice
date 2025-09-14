@@ -17,8 +17,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JwtService {
 
-    @Value("${jwt.token.allowed.time.period}")
-    private Long exp;
+    @Value("${token.exp.accessToken}")
+    private String accessTokenExp;
+
+    @Value("${token.exp.refreshToken}")
+    private String refreshTokenExp;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -27,24 +30,39 @@ public class JwtService {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
-    //    creation of JWT token for a User
-    public String generateToken(User user) {
-
+    private Map<String, Object> getClaims(User user) {
         Map<String, Object> defaultClaims = new HashMap<>();
         defaultClaims.put("name", user.getUsername());
         defaultClaims.put("iat", System.currentTimeMillis());
-        defaultClaims.put("exp", System.currentTimeMillis() + exp);
         defaultClaims.put("roles", user.getRoles());
+        return defaultClaims;
+    }
 
+    //    creation of JWT token for a User
+    public String generateAccessToken(User user) {
 
+        Map<String, Object> claims = getClaims(user);
+        claims.put("exp", System.currentTimeMillis() + Long.parseLong(accessTokenExp));
         return Jwts.builder()
                 .subject(user.getUsername())
-                .claims(defaultClaims)
+                .claims(claims)
                 .signWith(getKey())
                 .compact();
     }
 
-    public String getUserNameFromJwtToken(String token) {
+    public String generateRefreshToken(User user) {
+
+        Map<String, Object> claims = getClaims(user);
+        claims.put("exp", System.currentTimeMillis() + Long.parseLong(refreshTokenExp));
+        return Jwts.builder()
+                .subject(user.getUsername())
+                .claims(claims)
+                .signWith(getKey())
+                .compact();
+    }
+
+
+    public String getUserNameFromToken(String token) {
 
         Claims claims = Jwts.parser()
                 .verifyWith(getKey())

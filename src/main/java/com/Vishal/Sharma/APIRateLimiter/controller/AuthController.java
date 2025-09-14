@@ -1,15 +1,16 @@
 package com.Vishal.Sharma.APIRateLimiter.controller;
 
 import com.Vishal.Sharma.APIRateLimiter.JwtUtils.JwtService;
+import com.Vishal.Sharma.APIRateLimiter.dto.AuthResponseDto;
 import com.Vishal.Sharma.APIRateLimiter.dto.UserDTO;
-import com.Vishal.Sharma.APIRateLimiter.entity.User;
 import com.Vishal.Sharma.APIRateLimiter.repository.UserRepository;
 import com.Vishal.Sharma.APIRateLimiter.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,26 +25,24 @@ public class AuthController {
 
 
     @PostMapping("/signup")
-    public ResponseEntity<String> userRegistration(@RequestBody UserDTO user) {
-        try {
-            String jwtToken = userService.createNewUser(user);
-            return new ResponseEntity<>(jwtToken, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<AuthResponseDto> userRegistration(@RequestBody UserDTO user, HttpServletResponse response) {
+
+        AuthResponseDto authResponseDto = userService.userRegistration(user, response);
+        return new ResponseEntity<>(authResponseDto, HttpStatus.CREATED);
+
     }
 
     @GetMapping("/login")
-    public ResponseEntity<String> loginUsingJwt(@RequestBody UserDTO userDTO) {
-        User userInDb = userRepository.findByUserName(userDTO.getUserName());
+    public ResponseEntity<AuthResponseDto> userLogin(@RequestBody UserDTO userDTO, HttpServletResponse response) {
 
-        if (userInDb == null)
-            throw new BadCredentialsException("Invalid username or password, try with different credentials");
+        AuthResponseDto authResponseDto = userService.userLogin(userDTO, response);
+        return ResponseEntity.ok(authResponseDto);
+    }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponseDto> refresh(HttpServletRequest request) {
 
-        String token = jwtService.generateToken(userInDb);
-        return ResponseEntity.ok(token);
-
-
+        AuthResponseDto authResponseDto = userService.refresh(request);
+        return ResponseEntity.ok(authResponseDto);
     }
 }

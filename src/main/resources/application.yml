@@ -19,12 +19,12 @@ limit:
     anonymousLimit: ${ALLOWED_ANONYMOUS_LIMIT}
 
 
-jwt:
-  token:
-    allowed:
-      time:
-        period: ${EXP_TIME}
+token:
+  exp:
+    accessToken: ${ACCESS_EXP_TIME}
+    refreshToken: ${REFRESH_EXP_TIME}
 
+jwt:
   secret: ${JWT_SECRET}
 
 

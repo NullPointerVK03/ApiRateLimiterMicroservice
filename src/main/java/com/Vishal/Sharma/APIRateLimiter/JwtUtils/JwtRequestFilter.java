@@ -40,7 +40,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             String authJwt = authHeader.split("Bearer ")[1];
 
-            String userName = jwtService.getUserNameFromJwtToken(authJwt);
+            String userName = jwtService.getUserNameFromToken(authJwt);
 
 
             if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) // user is already present in SecurityContextHolder
